@@ -63,7 +63,6 @@ export default {
     },
     onSignupSuccess(payload) {
       delete payload.name
-
       this.$auth.loginWith('local', { data: payload })
     },
     onSigneupError(err) {
