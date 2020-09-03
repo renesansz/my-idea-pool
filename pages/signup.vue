@@ -67,7 +67,8 @@ export default {
       this.$auth.loginWith('local', { data: payload })
     },
     onSigneupError(err) {
-      console.log(err)
+      // TODO: implement user notification
+      console.error(`Login error: ${ getErrorReason(err) }`)
     },
   },
 }
