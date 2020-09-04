@@ -64,7 +64,7 @@ export default {
    ** See https://axios.nuxtjs.org/options
    */
   axios: {
-    baseURL: 'https://small-project-api.herokuapp.com' // fallback value if runtime config is not provided.
+    baseURL: process.env.API_URL // fallback value if runtime config is not provided.
   },
   /*
    ** Nuxt Runtime Config (Public)
@@ -72,7 +72,7 @@ export default {
    */
   publicRuntimeConfig: {
     axios: {
-      browserBaseURL: process.env.API_URL
+      browserBaseURL: process.env.BROWSER_BASE_URL
     }
   },
   /*
@@ -90,6 +90,7 @@ export default {
    */
   vuetify: {
     customVariables: ['~/assets/variables.scss'],
+    defaultAssets: false,
     theme: {
       dark: false,
       themes: {
@@ -133,7 +134,7 @@ export default {
         refreshToken: {
           property: 'refresh_token',
           data: 'refresh_token',
-          maxAge: false // Refresh token does not expires
+          maxAge: false // refresh token does not expire
         },
         user: {
           property: false,
