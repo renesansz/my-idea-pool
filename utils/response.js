@@ -2,7 +2,7 @@
  * Get API error reason value.
  * It assumes a format of `err.response.data.reason`` otherwise it will return empty string.
  *
- * @param  {Object} err
+ * @param  {Object} err - The error object.
  *
  * @return {String}
  */

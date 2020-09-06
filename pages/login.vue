@@ -1,32 +1,35 @@
 <template>
-  <v-layout column justify-center align-center>
-    <v-flex xs12>LOG IN</v-flex>
-    <v-flex xs12>
-      <v-form ref="form" v-model="formValid" lazy-validation @submit.prevent="onFormSubmit">
-        <v-text-field
-          v-model="form.email"
-          color="success"
-          placeholder="Email"
-          type="email"
-          :rules="validation.emailRules"
-        />
-        <v-text-field
-          v-model="form.password"
-          color="success"
-          placeholder="Password"
-          type="password"
-          :rules="validation.passwordRules"
-        />
-        <v-btn color="success" type="submit" :loading="isLoading" tile>LOG IN</v-btn>
-        <nuxt-link to="/signup">Sign Up</nuxt-link>
-      </v-form>
-    </v-flex>
-  </v-layout>
+  <v-container class="px-16">
+    <v-row justify="space-around">
+      <v-col cols="12">LOG IN</v-col>
+      <v-col cols="12">
+        <v-form ref="form" v-model="formValid" lazy-validation @submit.prevent="onFormSubmit">
+          <v-text-field
+            v-model="form.email"
+            color="success"
+            placeholder="Email"
+            type="email"
+            :rules="validation.emailRules"
+          />
+          <v-text-field
+            v-model="form.password"
+            color="success"
+            placeholder="Password"
+            type="password"
+            :rules="validation.passwordRules"
+          />
+          <v-btn color="success" type="submit" :loading="isLoading" tile>LOG IN</v-btn>
+          <p>
+            Don't have an account? <nuxt-link to="/signup">Sign Up</nuxt-link>
+          </p>
+        </v-form>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
 import { getErrorReason } from '@/utils/response'
-
 import loginValidation from '@/validations/login'
 
 export default {
@@ -39,6 +42,7 @@ export default {
       password: '',
     },
     isLoading: false,
+    errorMessage: '',
   }),
   methods: {
     onFormSubmit() {
@@ -54,7 +58,7 @@ export default {
     },
     onLoginError(err) {
       // TODO: implement user notification
-      console.error(`Login error: ${ getErrorReason(err) }`)
+      this.errorMessage = getErrorReason(err)
     },
   },
 }

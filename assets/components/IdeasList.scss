@@ -1,0 +1,30 @@
+#ideas-list {
+  .empty-list-message {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 50vh;
+
+    picture {
+      width: 64px;
+      height: 96px;
+
+      img {
+        width: 100%;
+      }
+    }
+  }
+  .list-title {
+    font-size: 28px;
+  }
+  .add-btn {
+    picture {
+      width: 50px;
+
+      img {
+        width: 100%;
+      }
+    }
+  }
+}

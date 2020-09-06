@@ -1,36 +1,41 @@
 <template>
-  <v-layout column justify-center align-center>
-    <v-flex xs12>SIGN UP</v-flex>
-    <v-flex xs12>
-      <v-form ref="form" v-model="formValid" lazy-validation @submit.prevent="onFormSubmit">
-        <v-text-field
-          v-model="form.name"
-          color="success"
-          placeholder="Name"
-          :rules="validation.nameRules"
-        />
-        <v-text-field
-          v-model="form.email"
-          color="success"
-          placeholder="Email"
-          type="email"
-          :rules="validation.emailRules"
-        />
-        <v-text-field
-          v-model="form.password"
-          color="success"
-          placeholder="Password"
-          type="password"
-          :rules="validation.passwordRules"
-        />
-        <v-btn color="success" type="submit" :loading="isLoading" tile>Sign Up</v-btn>
-        <nuxt-link to="/login">Login</nuxt-link>
-      </v-form>
-    </v-flex>
-  </v-layout>
+  <v-container class="px-16">
+    <v-row justify="space-around">
+      <v-col cols="12">SIGN UP</v-col>
+      <v-col cols="12">
+        <v-form ref="form" v-model="formValid" lazy-validation @submit.prevent="onFormSubmit">
+          <v-text-field
+            v-model="form.name"
+            color="success"
+            placeholder="Name"
+            :rules="validation.nameRules"
+          />
+          <v-text-field
+            v-model="form.email"
+            color="success"
+            placeholder="Email"
+            type="email"
+            :rules="validation.emailRules"
+          />
+          <v-text-field
+            v-model="form.password"
+            color="success"
+            placeholder="Password"
+            type="password"
+            :rules="validation.passwordRules"
+          />
+          <v-btn color="success" type="submit" :loading="isLoading" tile>Sign Up</v-btn>
+          <p>
+            Already have an account? <nuxt-link to="/login">Login</nuxt-link>
+          </p>
+        </v-form>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
+import { getErrorReason } from '@/utils/response'
 import signupValidation from '@/validations/signup'
 
 export default {
@@ -44,6 +49,7 @@ export default {
       password: '',
     },
     isLoading: false,
+    errorMessage: '',
   }),
   methods: {
     onFormSubmit() {
@@ -54,20 +60,22 @@ export default {
 
         this.$axios
             .post('/users', payload)
-            .then(this.onSignupSuccess(payload))
+            .then(() => {
+              delete payload.name
+              this.loginUser(payload)
+            })
             .catch(this.onSigneupError)
             .finally(() => {
               this.isLoading = false
             })
       }
     },
-    onSignupSuccess(payload) {
-      delete payload.name
+    loginUser(payload) {
       this.$auth.loginWith('local', { data: payload })
     },
     onSigneupError(err) {
       // TODO: implement user notification
-      console.error(`Login error: ${ getErrorReason(err) }`)
+      this.errorMessage = getErrorReason(err)
     },
   },
 }
