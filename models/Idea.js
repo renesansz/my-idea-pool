@@ -19,8 +19,9 @@ function Idea(props) {
   this.impact = getPropertyOrDefault(props, 'impact', IMPACT_VALUE.MAX)
   this.ease = getPropertyOrDefault(props, 'ease', EASE_VALUE.MAX)
   this.confidence = getPropertyOrDefault(props, 'confidence', CONFIDENCE_VALUE.MAX)
-  this.editMode = getPropertyOrDefault(props, 'editMode', false)
   this.created_at = getPropertyOrDefault(props, 'created_at', 0)
+  // Additional fields that can be used on manipulating the data in-memory
+  this.editMode = getPropertyOrDefault(props, 'editMode', false)
   this.saving = false
   this.deleting = false
 

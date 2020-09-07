@@ -36,15 +36,33 @@
               <span v-else>{{ idea.content }}</span>
             </td>
             <td>
-              <v-text-field v-if="idea.editMode" v-model.number="idea.impact" type="number" min="1" max="10" />
+              <v-text-field
+                v-if="idea.editMode"
+                v-model.number="idea.impact"
+                :min="IMPACT_VALUE.MIN"
+                :max="IMPACT_VALUE.MAX"
+                type="number"
+              />
               <span v-else>{{ idea.impact }}</span>
             </td>
             <td>
-              <v-text-field v-if="idea.editMode" v-model.number="idea.ease" type="number" min="1" max="10" />
+              <v-text-field
+                v-if="idea.editMode"
+                v-model.number="idea.ease"
+                :min="EASE_VALUE.MIN"
+                :max="EASE_VALUE.MAX"
+                type="number"
+              />
               <span v-else>{{ idea.ease }}</span>
             </td>
             <td>
-              <v-text-field v-if="idea.editMode" v-model.number="idea.confidence" type="number" min="1" max="10" />
+              <v-text-field
+                v-if="idea.editMode"
+                v-model.number="idea.confidence"
+                :min="CONFIDENCE_VALUE.MIN"
+                :max="CONFIDENCE_VALUE.MAX"
+                type="number"
+              />
               <span v-else>{{ idea.confidence }}</span>
             </td>
             <td>{{ idea.avgRating }}</td>
@@ -74,14 +92,14 @@
       <div slot="no-more"></div>
       <div slot="no-results"></div>
     </infinite-loading>
-    <section v-if="isEmptyList" class="empty-list-message">
+    <div v-if="isEmptyList" class="empty-list-message">
       <picture>
         <source media="(min-width:768px)" srcset="/img/bulb@2x.png">
         <img src="/img/bulb.png" />
       </picture>
       <p class="mt-6">Got Ideas?</p>
-    </section>
-    <v-dialog v-model="deleteDialog" max-width="400">
+    </div>
+    <v-dialog v-model="deleteDialog" max-width="400" persistent>
       <v-card>
         <v-card-title class="headline">Are you sure?</v-card-title>
         <v-card-text>
@@ -94,7 +112,6 @@
             @click="cancelDelete">
             Disagree
           </v-btn>
-
           <v-btn
             color="green darken-1"
             text
@@ -108,32 +125,33 @@
 </template>
 
 <script>
-import { mdiCheck, mdiClose } from '@mdi/js'
-
 import InfiniteLoading from 'vue-infinite-loading'
 
 import { initializeListWithModel } from '@/utils/model'
-
-import Idea from '@/models/Idea'
+import Idea, {
+  IMPACT_VALUE,
+  EASE_VALUE,
+  CONFIDENCE_VALUE
+} from '@/models/Idea'
 
 export default {
   components: {
     InfiniteLoading,
   },
   data: () => ({
-    icon: {
-      mdiCheck,
-      mdiClose,
-    },
+    IMPACT_VALUE,
+    EASE_VALUE,
+    CONFIDENCE_VALUE,
     ideas: [],
+    ideasCache: {},
     page: 1,
     isFetching: false,
     deleteDialog: false,
     deleteIdx: null,
   }),
   computed: {
-    hasUnsavedIdea() {
-      return this.ideas.find(i => i.editMode) !== undefined
+    hasUnsavedNewIdea() {
+      return this.ideas.find(i => i.editMode && i.id === null) !== undefined
     },
     isEmptyList() {
       return this.ideas.length === 0 && !this.isFetching
@@ -141,7 +159,7 @@ export default {
   },
   methods: {
     addNewIdea() {
-      if (!this.hasUnsavedIdea) {
+      if (!this.hasUnsavedNewIdea) {
         this.ideas.push(new Idea({ editMode: true }))
       }
     },
@@ -175,7 +193,24 @@ export default {
       }
     },
     toggleEditMode(idx) {
-      this.ideas[idx].editMode = !this.ideas[idx].editMode
+      const idea = this.ideas[idx]
+
+      if (idea.id !== null) {
+        if (idea.id in this.ideasCache) {
+          const cache = Object.assign({}, this.ideasCache[idea.id])
+
+          idea.impact = cache.impact
+          idea.content = cache.content
+          idea.ease = cache.ease
+          idea.confidence = cache.confidence
+
+          delete this.ideasCache[idea.id]
+        } else {
+          this.ideasCache[idea.id] = Object.assign({}, idea)
+        }
+      }
+
+      idea.editMode = !idea.editMode
     },
     cancelDelete() {
       this.deleteDialog = false
@@ -201,6 +236,7 @@ export default {
         this.$ideasRepository
             .update(idea.id, idea.payload)
             .then((res) => {
+              delete this.ideasCache[idea.id]
               idea.editMode = false
             })
             .finally(() => {
@@ -245,5 +281,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "~/assets/components/IdeasList.scss";
+@import "~/assets/components/IdeasList";
 </style>

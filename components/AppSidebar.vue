@@ -70,17 +70,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.v-divider {
-  border-color: rgba(255, 255, 255, 0.2) !important;
-}
-.logo {
-  width: 64px;
-  height: 64px;
-  max-width: 64px;
-  margin: auto;
-
-  img {
-    width: 100%;
-  }
-}
+@import "~/assets/components/AppSidebar";
 </style>
