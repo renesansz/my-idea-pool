@@ -160,7 +160,7 @@ export default {
   methods: {
     addNewIdea() {
       if (!this.hasUnsavedNewIdea) {
-        this.ideas.push(new Idea({ editMode: true }))
+        this.ideas.splice(0, 0, new Idea({ editMode: true }))
       }
     },
     deleteIdea(idx) {
