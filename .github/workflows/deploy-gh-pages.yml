@@ -15,7 +15,7 @@ jobs:
         run: echo '::set-env name=API_URL::${{ secrets.API_URL }}'
         
       - name: Set BROWSER_BASE_URL ENV
-        run: echo '::set-env name=API_URL::${{ secrets.BROWSER_BASE_URL }}'
+        run: echo '::set-env name=BROWSER_BASE_URL::${{ secrets.BROWSER_BASE_URL }}'
 
       - name: Install and Build 🔧
         run: |
