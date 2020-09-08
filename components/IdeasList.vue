@@ -128,7 +128,7 @@
                 color="green darken-1"
                 text
                 block
-                @click="deleteIdea(deleteIdx)">
+                @click="deleteIdea(deleteID)">
                 OK
               </v-btn>
             </v-col>
@@ -162,7 +162,7 @@ export default {
     page: 1,
     isFetching: false,
     deleteDialog: false,
-    deleteIdx: null,
+    deleteID: null,
   }),
   computed: {
     hasUnsavedNewIdea() {
@@ -198,9 +198,9 @@ export default {
           this.toggleEditMode(idea.id)
           return
         }
-        if (this.deleteIdx === null) {
+        if (this.deleteID === null) {
           this.deleteDialog = true
-          this.deleteIdx = idx
+          this.deleteID = idea.id
           return
         }
 
@@ -209,7 +209,7 @@ export default {
         this.$ideasRepository
             .delete(idea.id)
             .then(() => {
-              this.deleteIdx = null
+              this.deleteID = null
             })
             .finally(() => {
               idea.deleting = false
@@ -244,7 +244,7 @@ export default {
     },
     cancelDelete() {
       this.deleteDialog = false
-      this.deleteIdx = null
+      this.deleteID = null
     },
     saveIdea(id) {
       const idx = this.getItemIndex(id)
