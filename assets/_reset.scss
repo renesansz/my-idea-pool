@@ -1,0 +1,13 @@
+a, a:-webkit-any-link {
+  text-decoration: none;
+}
+
+input:-internal-autofill-selected {
+  background-color: transparent !important;
+}
+
+.v-input__slot {
+  &:after {
+    display: none;
+  }
+}

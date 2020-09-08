@@ -1,7 +1,9 @@
 <template>
-  <v-container class="px-16">
+  <v-container id="signup-page">
     <v-row justify="space-around">
-      <v-col cols="12">SIGN UP</v-col>
+      <v-col class="text-center" cols="12">
+        <h1>Sign Up</h1>
+      </v-col>
       <v-col cols="12">
         <v-form ref="form" v-model="formValid" lazy-validation @submit.prevent="onFormSubmit">
           <v-text-field
@@ -24,11 +26,15 @@
             type="password"
             :rules="validation.passwordRules"
           />
-          <v-btn color="success" type="submit" :loading="isLoading" tile>Sign Up</v-btn>
-          <p>
-            Already have an account? <nuxt-link to="/login">Login</nuxt-link>
-          </p>
         </v-form>
+      </v-col>
+    </v-row>
+    <v-row align="center">
+      <v-col cols="4">
+        <v-btn color="success" :loading="isLoading" tile block @click="onFormSubmit">Sign Up</v-btn>
+      </v-col>
+      <v-col offset="1" cols="7">
+        Already have an account? <nuxt-link class="success--text" to="/login">Login</nuxt-link>
       </v-col>
     </v-row>
   </v-container>
@@ -80,3 +86,7 @@ export default {
   },
 }
 </script>
+
+<style lang="scss" scoped>
+@import "~/assets/pages/login.scss"
+</style>

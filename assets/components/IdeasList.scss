@@ -27,4 +27,102 @@
       }
     }
   }
+  .ideas-table {
+    .controls {
+      transition: 0.2s all ease-in;
+    }
+    th, td {
+      border-bottom: none;
+    }
+    tr {
+      &:hover {
+        background: transparent !important;
+      }
+    }
+    tr:not(.edit-mode) {
+      td:last-child {
+        transition: 0.2s opacity ease-in;
+        opacity: 0;
+      }
+      &:hover {
+        background: transparent !important;
+
+        td:last-child {
+          opacity: 1;
+        }
+      }
+    }
+    .table-header {
+      width: 77px;
+    }
+    .table-controls {
+      width: 140px;
+    }
+    .v-input {
+      margin-top: 0;
+
+      input[type="number"] {
+        font-size: 14px;
+        text-align: center;
+        padding: 0;
+        flex: unset;
+        width: 45px;
+        margin: auto;
+        text-align: right;
+      }
+    }
+    .v-input.content-field.v-input--is-readonly,
+    .v-input:not(.content-field) {
+      .v-input__slot {
+        &:before {
+          display: none;
+        }
+      }
+    }
+    .v-input__slot {
+      margin-bottom: 0;
+
+      &:after {
+        display: none;
+      }
+    }
+    .idea-entry {
+      position: relative;
+      transition: 0.2s all ease-in;
+
+      .idea-content {
+        font-size: 16px;
+        position: relative;
+        padding-left: 24px;
+
+        &::before {
+          content: "";
+          width: 8px;
+          height: 8px;
+          background: rgba(42,56,66,0.4);
+          position: absolute;
+          border-radius: 90%;
+          left: 0;
+          top: 12px;
+        }
+      }
+      &.invisible {
+        opacity: 0;
+      }
+    }
+  }
+}
+
+.confirm-delete-dialog {
+  .v-card__title {
+    font-size: 24px !important;
+    font-weight: 400 !important;
+    padding-top: 30px !important;
+    justify-content: center;
+  }
+  .v-card__text {
+    margin-top: 36px;
+    margin-bottom: 10px;
+    font-size: 16px;
+  }
 }

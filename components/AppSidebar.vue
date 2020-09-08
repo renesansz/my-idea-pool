@@ -4,7 +4,7 @@
       <v-icon v-if="!showNav">{{ icon.mdiMenu }}</v-icon>
       <v-icon v-else>{{ icon.mdiClose }}</v-icon>
     </v-btn>
-    <v-navigation-drawer v-model="showNav" color="#05a844" width="200px" fixed dark app>
+    <v-navigation-drawer v-model="showNav" color="success" width="200px" fixed dark app>
       <v-container class="px-7">
         <v-list>
           <v-list-item>
@@ -26,7 +26,7 @@
                 />
               </v-avatar>
               <p class="mt-2">{{ $auth.user.name }}</p>
-              <v-btn text color="error" :loading="isLoading" @click="doLogout">Logout</v-btn>
+              <v-btn text color="rgba(42,56,66,0.65)" :loading="isLoading" @click="doLogout">Logout</v-btn>
             </v-list-item-content>
           </v-list-item>
         </v-list>

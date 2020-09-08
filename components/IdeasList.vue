@@ -1,7 +1,7 @@
 <template>
   <section id="ideas-list">
     <header>
-      <v-container class="pb-8">
+      <v-container>
         <v-row no-gutters>
           <v-col cols="11">
             <p class="list-title">My ideas</p>
@@ -17,69 +17,76 @@
         </v-row>
       </v-container>
     </header>
-    <v-divider />
-    <v-simple-table v-if="!isEmptyList">
+    <v-divider class="mb-9" />
+    <v-simple-table v-if="!isEmptyList" class="ideas-table pl-5">
       <template v-slot:default>
         <thead>
           <tr>
             <th></th>
-            <th>Impact</th>
-            <th>Ease</th>
-            <th>Confidence</th>
-            <th>Avg.</th>
+            <th class="text-center font-weight-regular table-header">Impact</th>
+            <th class="text-center font-weight-regular table-header">Ease</th>
+            <th class="text-center font-weight-regular table-header">Confidence</th>
+            <th class="text-center table-header">Avg.</th>
+            <th class="table-controls"></th>
           </tr>
         </thead>
-        <tbody>
-          <tr v-for="(idea, idx) in ideas" :key="idx">
-            <td>
-              <v-text-field v-if="idea.editMode" v-model="idea.content" />
-              <span v-else>{{ idea.content }}</span>
-            </td>
-            <td>
+        <tbody is="transition-group" name="fade">
+          <tr v-for="(idea, idx) in sortedIdeas" :key="idx" class="idea-entry" :class="{ 'edit-mode': idea.editMode, 'invisible': idea.deleting }">
+            <td class="idea-content">
               <v-text-field
-                v-if="idea.editMode"
+                v-model="idea.content"
+                :readonly="!idea.editMode"
+                class="content-field pt-0"
+              />
+            </td>
+            <td class="text-center">
+              <v-text-field
                 v-model.number="idea.impact"
+                :readonly="!idea.editMode"
                 :min="IMPACT_VALUE.MIN"
                 :max="IMPACT_VALUE.MAX"
                 type="number"
               />
-              <span v-else>{{ idea.impact }}</span>
             </td>
-            <td>
+            <td class="text-center">
               <v-text-field
-                v-if="idea.editMode"
                 v-model.number="idea.ease"
+                :readonly="!idea.editMode"
                 :min="EASE_VALUE.MIN"
                 :max="EASE_VALUE.MAX"
                 type="number"
               />
-              <span v-else>{{ idea.ease }}</span>
             </td>
-            <td>
+            <td class="text-center">
               <v-text-field
-                v-if="idea.editMode"
                 v-model.number="idea.confidence"
+                :readonly="!idea.editMode"
                 :min="CONFIDENCE_VALUE.MIN"
                 :max="CONFIDENCE_VALUE.MAX"
                 type="number"
               />
-              <span v-else>{{ idea.confidence }}</span>
             </td>
-            <td>{{ idea.avgRating }}</td>
-            <td>
+            <td class="text-center">
+              <v-text-field
+                v-model.number="idea.avgRating"
+                type="number"
+                readonly
+              />
+            </td>
+            <td class="controls text-center">
               <div v-if="idea.editMode">
-                <v-btn text :loading="idea.saving" :disabled="idea.deleting" @click="saveIdea(idx)">
+                <v-btn text small :loading="idea.saving" :disabled="idea.deleting" @click="saveIdea(idea.id)">
                   <img src="img/Confirm_V.png" />
                 </v-btn>
-                <v-btn text :loading="idea.deleting" :disabled="idea.saving" @click="deleteIdea(idx)">
+                <v-btn text small :loading="idea.deleting" :disabled="idea.saving" @click="deleteIdea(idea.id)">
                   <img src="img/Cancel_X.png" />
                 </v-btn>
               </div>
               <div v-else>
-                <v-btn text :disabled="idea.deleting" @click="toggleEditMode(idx)">
+                <v-btn text small :disabled="idea.deleting" @click="toggleEditMode(idea.id)">
                   <img src="img/pen.png" />
                 </v-btn>
-                <v-btn text :loading="idea.deleting" :disabled="idea.saving" @click="deleteIdea(idx)">
+                <v-btn text small :loading="idea.deleting" :disabled="idea.saving" @click="deleteIdea(idea.id)">
                   <img src="img/bin.png" />
                 </v-btn>
               </div>
@@ -100,24 +107,32 @@
       <p class="mt-6">Got Ideas?</p>
     </div>
     <v-dialog v-model="deleteDialog" max-width="400" persistent>
-      <v-card>
-        <v-card-title class="headline">Are you sure?</v-card-title>
-        <v-card-text>
+      <v-card class="confirm-delete-dialog">
+        <v-card-title>Are you sure?</v-card-title>
+        <v-card-text class="text-center">
           This idea will be permanently deleted.
         </v-card-text>
-        <v-card-actions>
-          <v-btn
-            color="green darken-1"
-            text
-            @click="cancelDelete">
-            Disagree
-          </v-btn>
-          <v-btn
-            color="green darken-1"
-            text
-            @click="deleteIdea(deleteIdx)">
-            Agree
-          </v-btn>
+        <v-card-actions class="px-12">
+          <v-row>
+            <v-col>
+              <v-btn
+                color="rgba(42,56,66,1)"
+                text
+                block
+                @click="cancelDelete">
+                Cancel
+              </v-btn>
+            </v-col>
+            <v-col>
+              <v-btn
+                color="green darken-1"
+                text
+                block
+                @click="deleteIdea(deleteIdx)">
+                OK
+              </v-btn>
+            </v-col>
+          </v-row>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -156,19 +171,26 @@ export default {
     isEmptyList() {
       return this.ideas.length === 0 && !this.isFetching
     },
+    sortedIdeas() {
+      return this.ideas.slice().sort((a, b) => b.avgRating - a.avgRating)
+    }
   },
   methods: {
+    getItemIndex (id) {
+      return this.ideas.findIndex(i => i.id === id)
+    },
     addNewIdea() {
       if (!this.hasUnsavedNewIdea) {
         this.ideas.splice(0, 0, new Idea({ editMode: true }))
       }
     },
-    deleteIdea(idx) {
+    deleteIdea(id) {
+      const idx = this.getItemIndex(id)
       const idea = this.ideas[idx]
 
       if (idea.id) {
         if (idea.editMode) {
-          this.toggleEditMode(idx)
+          this.toggleEditMode(idea.id)
           return
         }
         if (this.deleteIdx === null) {
@@ -183,16 +205,19 @@ export default {
             .delete(idea.id)
             .then(() => {
               this.deleteIdx = null
-              this.ideas.splice(idx, 1)
             })
             .finally(() => {
               idea.deleting = false
             })
+        setTimeout(() => {
+          this.ideas.splice(idx, 1)
+        }, 300)
       } else {
         this.ideas.splice(idx, 1)
       }
     },
-    toggleEditMode(idx) {
+    toggleEditMode(id) {
+      const idx = this.getItemIndex(id)
       const idea = this.ideas[idx]
 
       if (idea.id !== null) {
@@ -216,7 +241,8 @@ export default {
       this.deleteDialog = false
       this.deleteIdx = null
     },
-    saveIdea(idx) {
+    saveIdea(id) {
+      const idx = this.getItemIndex(id)
       const idea = this.ideas[idx]
 
       idea.saving = true
@@ -280,6 +306,6 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 @import "~/assets/components/IdeasList";
 </style>
