@@ -172,7 +172,12 @@ export default {
       return this.ideas.length === 0 && !this.isFetching
     },
     sortedIdeas() {
-      return this.ideas.slice().sort((a, b) => b.avgRating - a.avgRating)
+      return this.ideas
+                 .slice()
+                 .sort((a, b) => {
+                    if (a.editMode || b.editMode) return 0
+                    return b.avgRating - a.avgRating
+                 })
     }
   },
   methods: {
