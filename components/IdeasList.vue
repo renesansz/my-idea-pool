@@ -259,6 +259,8 @@ export default {
               idea.id = res.data.id
               idea.created_at = res.data.created_at
               idea.editMode = false
+
+              this.applySortedIdeas()
             })
             .finally(() => {
               idea.saving = false
@@ -269,6 +271,8 @@ export default {
             .then((res) => {
               delete this.ideasCache[idea.id]
               idea.editMode = false
+
+              this.applySortedIdeas()
             })
             .finally(() => {
               idea.saving = false
@@ -306,6 +310,9 @@ export default {
       } catch {
         $state.complete()
       }
+    },
+    applySortedIdeas () {
+      this.ideas = initializeListWithModel(JSON.parse(JSON.stringify(this.sortedIdeas)), Idea)
     },
   },
 }
