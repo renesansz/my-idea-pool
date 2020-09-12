@@ -9,12 +9,7 @@
 </template>
 
 <script>
-import IdeasList from '~/components/IdeasList.vue'
-
 export default {
   middleware: 'auth',
-  components: {
-    IdeasList,
-  },
 }
 </script>
